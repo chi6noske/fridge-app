@@ -4,20 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <title>冷蔵庫アプリ</title>
 </head>
 <body>
+  <header class="top-nav">
+    <button class="nav-icon nav-menu" type="button" aria-label="メニュー">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
 
-  <h1>冷蔵庫アプリ</h1>
+    <button class="category-filter" type="button">
+      <span class="material-symbols-outlined">arrow_drop_down</span>
+      カテゴリーを選択
+    </button>
 
-  <input type="text" id="foodInput" placeholder="食材名を入力">
-  <button id="addButton">追加</button>
+    <button class="nav-icon" type="button" aria-label="お知らせ">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </header>
 
-  <ul id="foodList"></ul>
+  <main class="app-main">
+    <h1 class="section-title">食材一覧</h1>
+    <ul id="foodList" class="food-list"></ul>
+  </main>
+
+  <a class="floating-barcode-button" href="add.html">
+      <span class="material-symbols-outlined">add</span>
+      <span>追加</span>
+  </a>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="is-active">
+      <span class="material-symbols-outlined">home</span>
+      <span>ホーム</span>
+    </a>
+
+    <a href="#">
+      <span class="material-symbols-outlined">tune</span>
+      <span>整理する</span>
+    </a>
+
+    <a href="#">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span>買い物リスト</span>
+    </a>
+
+    <a href="#">
+      <span class="material-symbols-outlined">info</span>
+      <span>お知らせ</span>
+    </a>
+
+    <a href="#">
+      <span class="material-symbols-outlined">settings</span>
+      <span>設定</span>
+    </a>
+  </nav>
 
   <script src="app.js"></script>
-
 </body>
 </html>

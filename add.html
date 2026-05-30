@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>食材登録｜冷蔵庫アプリ</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+<body class="screen-add">
+  <header class="page-top-bar">
+    <a class="page-back" href="index.html" aria-label="一覧へ戻る">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </a>
+    <h1>食材を登録</h1>
+    <span class="page-top-spacer"></span>
+  </header>
+
+  <main class="app-main add-main">
+    <form id="addFoodForm" class="add-form">
+      <label class="form-field">
+        <span class="field-label">
+          <span class="material-symbols-outlined">eco</span>
+          品名
+        </span>
+        <input type="text" id="foodName" placeholder="例）にんじん" required>
+      </label>
+
+      <label class="form-field">
+        <span class="field-label">
+          <span class="material-symbols-outlined">sell</span>
+          ジャンル
+        </span>
+        <select id="foodGenre" required>
+          <option value="" selected disabled>選択してください</option>
+          <option value="肉">肉</option>
+          <option value="魚">魚</option>
+          <option value="野菜・くだもの">野菜・くだもの</option>
+          <option value="卵・乳製品">卵・乳製品</option>
+          <option value="主食">主食</option>
+          <option value="調味料">調味料</option>
+          <option value="その他">その他</option>
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span class="field-label">
+          <span class="material-symbols-outlined">kitchen</span>
+          保管場所
+        </span>
+        <select id="storagePlace" required>
+          <option value="" selected disabled>選択してください</option>
+          <option value="冷蔵庫">冷蔵庫</option>
+          <option value="冷凍庫">冷凍庫</option>
+          <option value="常温">常温</option>
+        </select>
+      </label>
+
+      <div class="form-row quantity-unit-row">
+        <div class="form-field">
+          <span class="field-label">
+            <span class="material-symbols-outlined">remove_circle</span>
+            数量
+          </span>
+          <div class="quantity-stepper">
+            <button type="button" id="minusQuantity">−</button>
+            <input type="number" id="quantity" value="1" min="0" step="1" required>
+            <button type="button" id="plusQuantity">＋</button>
+          </div>
+        </div>
+
+        <label class="form-field">
+          <span class="field-label">
+            <span class="material-symbols-outlined">redeem</span>
+            単位
+          </span>
+          <select id="unit" required>
+            <option value="個">個</option>
+            <option value="本">本</option>
+            <option value="袋">袋</option>
+            <option value="パック">パック</option>
+            <option value="枚">枚</option>
+            <option value="g">g</option>
+            <option value="kg">kg</option>
+            <option value="ml">ml</option>
+            <option value="L">L</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="form-field">
+        <span class="field-label">
+          <span class="material-symbols-outlined">calendar_month</span>
+          賞味期限
+        </span>
+        <input type="date" id="expiryDate">
+      </label>
+
+      <label class="form-field">
+        <span class="field-label">
+          <span class="material-symbols-outlined">edit</span>
+          メモ（任意）
+        </span>
+        <textarea id="memo" rows="3" placeholder="例）開封済み、使いかけなど"></textarea>
+      </label>
+
+      <button type="submit" class="submit-button">登録する</button>
+      <a class="cancel-link" href="index.html">キャンセル</a>
+    </form>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html">
+      <span class="material-symbols-outlined">home</span>
+      <span>ホーム</span>
+    </a>
+    <a href="#">
+      <span class="material-symbols-outlined">tune</span>
+      <span>整理する</span>
+    </a>
+    <a href="#">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span>買い物リスト</span>
+    </a>
+    <a href="#">
+      <span class="material-symbols-outlined">info</span>
+      <span>お知らせ</span>
+    </a>
+    <a href="#">
+      <span class="material-symbols-outlined">settings</span>
+      <span>設定</span>
+    </a>
+  </nav>
+
+  <script>
+    const addFoodForm = document.getElementById("addFoodForm");
+    const foodName = document.getElementById("foodName");
+    const foodGenre = document.getElementById("foodGenre");
+    const storagePlace = document.getElementById("storagePlace");
+    const quantity = document.getElementById("quantity");
+    const unit = document.getElementById("unit");
+    const expiryDate = document.getElementById("expiryDate");
+    const memo = document.getElementById("memo");
+    const minusQuantity = document.getElementById("minusQuantity");
+    const plusQuantity = document.getElementById("plusQuantity");
+
+    function loadFoods() {
+      return JSON.parse(localStorage.getItem("foods")) || [];
+    }
+
+    function saveFoods(foods) {
+      localStorage.setItem("foods", JSON.stringify(foods));
+    }
+
+    minusQuantity.addEventListener("click", () => {
+      const currentValue = Number(quantity.value) || 0;
+      quantity.value = Math.max(0, currentValue - 1);
+    });
+
+    plusQuantity.addEventListener("click", () => {
+      const currentValue = Number(quantity.value) || 0;
+      quantity.value = currentValue + 1;
+    });
+
+    addFoodForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const foods = loadFoods();
+      const name = foodName.value.trim();
+
+      if (!name) {
+        return;
+      }
+
+      foods.push({
+        id: crypto.randomUUID(),
+        registeredAt: new Date().toISOString(),
+        name: name,
+        genre: foodGenre.value,
+        storage: storagePlace.value,
+        quantity: Number(quantity.value),
+        unit: unit.value,
+        expiryDate: expiryDate.value,
+        memo: memo.value.trim()
+      });
+
+      saveFoods(foods);
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
