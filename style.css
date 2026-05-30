@@ -337,6 +337,11 @@ li {
   margin-left: auto;
 }
 
+.expiry-badge.expired {
+  color: var(--color-alert);
+  font-weight: 400;
+}
+
 .food-arrow {
   grid-area: arrow;
 

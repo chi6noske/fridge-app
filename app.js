@@ -60,6 +60,20 @@ function getDateLabel(food) {
   return `登録: ${formatDate(food.registeredAt.slice(0, 10))}`;
 }
 
+function isExpired(food) {
+  if (!food.expiryDate) {
+    return false;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const expiryDate = new Date(food.expiryDate);
+  expiryDate.setHours(0, 0, 0, 0);
+
+  return expiryDate < today;
+}
+
 function getThumbnailIcon(genre) {
   const icons = {
     "肉": "kebab_dining",
@@ -243,9 +257,12 @@ function renderFoods() {
 
     const amount = document.createElement("div");
     amount.className = "food-amount";
+
+    const expiryClass = isExpired(food) ? "expiry-badge expired" : "expiry-badge";
+
     amount.innerHTML = `
       <span>${food.quantity}${food.unit}</span>
-      <span class="expiry-badge">${getDateLabel(food)}</span>
+      <span class="${expiryClass}">${getDateLabel(food)}</span>
     `;
 
     detail.appendChild(name);
