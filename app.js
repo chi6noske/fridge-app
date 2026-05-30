@@ -32,13 +32,18 @@ function renderFoods() {
       li.style.transition = "none";
     });
 
-    li.addEventListener("touchmove", (event) => {
-      currentX = event.touches[0].clientX - startX;
+    li.addEventListener(
+  "touchmove",
+  (event) => {
+    currentX = event.touches[0].clientX - startX;
 
-      if (currentX > 0) {
-        li.style.transform = `translateX(${currentX}px)`;
-      }
-    });
+    if (currentX > 0) {
+      event.preventDefault();
+      li.style.transform = `translateX(${currentX}px)`;
+    }
+  },
+  { passive: false }
+);
 
     li.addEventListener("touchend", () => {
       li.style.transition = "transform 0.25s ease-out, opacity 0.25s ease-out";
