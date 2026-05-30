@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>買い物リスト</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+<body>
+
+  <header class="top-nav">
+    <button class="nav-icon nav-menu" type="button" aria-label="メニュー">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+
+    <div class="page-title">
+      買い物リスト
+    </div>
+
+    <button class="nav-icon" type="button" aria-label="お知らせ">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </header>
+
+  <main class="app-main shopping-main">
+    <form id="shoppingForm" class="shopping-add-form">
+      <input type="text" id="shoppingInput" placeholder="買うものを入力">
+      <button type="submit">追加</button>
+    </form>
+
+    <ul id="shoppingList" class="shopping-list"></ul>
+  </main>
+
+  <button class="floating-barcode-button" id="focusShoppingInput" type="button">
+    <span class="material-symbols-outlined">add</span>
+    <span>追加</span>
+  </button>
+
+  <nav class="bottom-nav">
+    <a href="index.html">
+      <span class="material-symbols-outlined">home</span>
+      <span>ホーム</span>
+    </a>
+
+    <a href="#">
+      <span class="material-symbols-outlined">tune</span>
+      <span>整理する</span>
+    </a>
+
+    <div class="bottom-nav-spacer"></div>
+
+    <a href="shopping.html" class="is-active">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span>買い物リスト</span>
+    </a>
+
+    <a href="#">
+      <span class="material-symbols-outlined">settings</span>
+      <span>設定</span>
+    </a>
+  </nav>
+
+  <script>
+    const shoppingForm = document.getElementById("shoppingForm");
+    const shoppingInput = document.getElementById("shoppingInput");
+    const shoppingList = document.getElementById("shoppingList");
+    const focusShoppingInput = document.getElementById("focusShoppingInput");
+
+    let shoppingItems = JSON.parse(localStorage.getItem("shoppingItems")) || [];
+
+    function saveShoppingItems() {
+      localStorage.setItem("shoppingItems", JSON.stringify(shoppingItems));
+    }
+
+    function renderShoppingItems() {
+      shoppingList.innerHTML = "";
+
+      if (shoppingItems.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "empty-message";
+        emptyMessage.textContent = "買うものを追加してみましょう";
+        shoppingList.appendChild(emptyMessage);
+        return;
+      }
+
+      const sortedItems = [...shoppingItems].sort((a, b) => {
+        return Number(a.done) - Number(b.done);
+      });
+
+      sortedItems.forEach((item) => {
+        const li = document.createElement("li");
+        li.className = "shopping-item";
+
+        if (item.done) {
+          li.classList.add("is-done");
+        }
+
+        const checkIcon = document.createElement("span");
+        checkIcon.className = "material-symbols-outlined shopping-check";
+        checkIcon.textContent = item.done ? "check_circle" : "radio_button_unchecked";
+
+        const itemName = document.createElement("span");
+        itemName.className = "shopping-item-name";
+        itemName.textContent = item.name;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "shopping-delete-button";
+        deleteButton.type = "button";
+        deleteButton.innerHTML = '<span class="material-symbols-outlined">close</span>';
+
+        li.addEventListener("click", () => {
+          item.done = !item.done;
+          saveShoppingItems();
+          renderShoppingItems();
+        });
+
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          shoppingItems = shoppingItems.filter((shoppingItem) => shoppingItem.id !== item.id);
+          saveShoppingItems();
+          renderShoppingItems();
+        });
+
+        li.appendChild(checkIcon);
+        li.appendChild(itemName);
+        li.appendChild(deleteButton);
+        shoppingList.appendChild(li);
+      });
+    }
+
+    shoppingForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const name = shoppingInput.value.trim();
+
+      if (!name) {
+        return;
+      }
+
+      shoppingItems.push({
+        id: crypto.randomUUID(),
+        name: name,
+        done: false
+      });
+
+      saveShoppingItems();
+      renderShoppingItems();
+      shoppingInput.value = "";
+      shoppingInput.focus();
+    });
+
+    focusShoppingInput.addEventListener("click", () => {
+      shoppingInput.focus();
+    });
+
+    renderShoppingItems();
+  </script>
+</body>
+</html>

@@ -13,10 +13,9 @@
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <button class="category-filter" type="button">
-      <span class="material-symbols-outlined">arrow_drop_down</span>
-      カテゴリーを選択
-    </button>
+    <div class="page-title">
+      食材一覧
+    </div>
 
     <button class="nav-icon" type="button" aria-label="お知らせ">
       <span class="material-symbols-outlined">notifications</span>
@@ -24,7 +23,6 @@
   </header>
 
   <main class="app-main">
-    <h1 class="section-title">食材一覧</h1>
     <ul id="foodList" class="food-list"></ul>
   </main>
 
@@ -39,19 +37,16 @@
       <span>ホーム</span>
     </a>
 
-    <a href="#">
+    <button class="bottom-nav-button" id="openFilterPanel" type="button">
       <span class="material-symbols-outlined">tune</span>
       <span>整理する</span>
-    </a>
+    </button>
 
-    <a href="#">
+    <div class="bottom-nav-spacer"></div>
+
+    <a href="shopping.html">
       <span class="material-symbols-outlined">shopping_cart</span>
       <span>買い物リスト</span>
-    </a>
-
-    <a href="#">
-      <span class="material-symbols-outlined">info</span>
-      <span>お知らせ</span>
     </a>
 
     <a href="#">
@@ -60,6 +55,71 @@
     </a>
   </nav>
 
+  <div class="filter-panel" id="filterPanel" aria-hidden="true">
+    <div class="filter-panel-backdrop" id="closeFilterPanel"></div>
+
+    <section class="filter-panel-content" aria-label="整理する">
+      <div class="filter-panel-header">
+        <h2>整理する</h2>
+        <button class="filter-panel-close" id="closeFilterPanelButton" type="button" aria-label="閉じる">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="filter-group">
+        <h3>並べ替え</h3>
+        <div class="filter-options">
+          <button class="filter-chip is-active" type="button" data-sort="registered">登録日順</button>
+          <button class="filter-chip" type="button" data-sort="expiry">期限が近い順</button>
+          <button class="filter-chip" type="button" data-sort="storage">保存場所順</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3>ジャンル</h3>
+
+        <div class="filter-checkboxes" id="genreFilter">
+          <label><input type="checkbox" value="肉"> 肉</label>
+          <label><input type="checkbox" value="魚"> 魚</label>
+          <label><input type="checkbox" value="野菜・くだもの"> 野菜・くだもの</label>
+          <label><input type="checkbox" value="卵・乳製品"> 卵・乳製品</label>
+          <label><input type="checkbox" value="主食"> 主食</label>
+          <label><input type="checkbox" value="調理済み"> 調理済み</label>
+          <label><input type="checkbox" value="調味料"> 調味料</label>
+          <label><input type="checkbox" value="その他"> その他</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3>保存場所</h3>
+        <select id="storageFilter" class="filter-select">
+          <option value="">すべて</option>
+          <option value="冷蔵庫">冷蔵庫</option>
+          <option value="冷凍庫">冷凍庫</option>
+          <option value="常温">常温</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <h3>賞味期限</h3>
+        <div class="date-filter-row">
+          <label>
+            <span>開始日</span>
+            <input type="date" id="expiryFromFilter">
+          </label>
+          <label>
+            <span>終了日</span>
+            <input type="date" id="expiryToFilter">
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="filter-reset-button" id="resetFilters" type="button">リセット</button>
+        <button class="filter-apply-button" id="applyFilters" type="button">適用する</button>
+      </div>
+    </section>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
