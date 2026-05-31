@@ -74,6 +74,108 @@ function isExpired(food) {
   return expiryDate < today;
 }
 
+function getToday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function getDaysUntil(dateText) {
+  const targetDate = new Date(dateText);
+  targetDate.setHours(0, 0, 0, 0);
+
+  const diff = targetDate - getToday();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+function getDaysSince(dateText) {
+  const startDate = new Date(dateText);
+  startDate.setHours(0, 0, 0, 0);
+
+  const diff = getToday() - startDate;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function loadNotificationSettings() {
+  const defaultSettings = {
+    badgeEnabled: true,
+    defaultExpiryAlert: 1,
+    meatAlert: 1,
+    fishAlert: 1,
+    dairyAlert: 1,
+    seasoningAlert: 14,
+    vegetableAlert: 14,
+    cookedAlert: 3,
+    frozenAlert: 30
+  };
+
+  const savedSettings = JSON.parse(localStorage.getItem("settings")) || {};
+
+  return {
+    ...defaultSettings,
+    ...savedSettings
+  };
+}
+
+function getExpiryAlertDays(food, settings) {
+  const alertDaysByGenre = {
+    "肉": settings.meatAlert,
+    "魚": settings.fishAlert,
+    "卵・乳製品": settings.dairyAlert,
+    "調味料": settings.seasoningAlert
+  };
+
+  return alertDaysByGenre[food.genre] ?? settings.defaultExpiryAlert;
+}
+
+function shouldNotifyByExpiryDate(food, settings) {
+  if (!food.expiryDate) {
+    return false;
+  }
+
+  return getDaysUntil(food.expiryDate) <= getExpiryAlertDays(food, settings);
+}
+
+function shouldNotifyByRegisteredDate(food, settings) {
+  if (food.expiryDate) {
+    return false;
+  }
+
+  const daysSinceRegistered = getDaysSince(food.registeredAt.slice(0, 10));
+
+  if (food.storage === "冷凍庫") {
+    return daysSinceRegistered >= settings.frozenAlert;
+  }
+
+  if (food.genre === "野菜・くだもの") {
+    return daysSinceRegistered >= settings.vegetableAlert;
+  }
+
+  if (food.genre === "調理済み") {
+    return daysSinceRegistered >= settings.cookedAlert;
+  }
+
+  return false;
+}
+
+function getNotificationFoods() {
+  const settings = loadNotificationSettings();
+
+  if (!settings.badgeEnabled) {
+    return [];
+  }
+
+  return foods.filter((food) => {
+    return shouldNotifyByExpiryDate(food, settings) || shouldNotifyByRegisteredDate(food, settings);
+  });
+}
+
+function updateNotificationBadge() {
+  if (window.notificationBadge) {
+    window.notificationBadge.updateGlobalNotificationBadge();
+  }
+}
+
 function getThumbnailIcon(genre) {
   const icons = {
     "肉": "kebab_dining",
@@ -212,8 +314,9 @@ function renderFoods() {
   if (visibleFoods.length === 0) {
     const emptyMessage = document.createElement("p");
     emptyMessage.className = "empty-message";
-    emptyMessage.textContent = "まずは右上の＋ボタンから食材を登録してみましょう";
+    emptyMessage.textContent = "まずは＋ボタンから食材を登録してみましょう";
     foodList.appendChild(emptyMessage);
+    updateNotificationBadge();
     return;
   }
 
@@ -281,6 +384,8 @@ function renderFoods() {
     container.appendChild(li);
     foodList.appendChild(container);
   });
+
+  updateNotificationBadge();
 }
 
 const filterPanel = document.getElementById("filterPanel");
@@ -362,3 +467,11 @@ resetFilters.addEventListener("click", () => {
 });
 
 renderFoods();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((error) => {
+      console.log("Service worker registration failed:", error);
+    });
+  });
+}

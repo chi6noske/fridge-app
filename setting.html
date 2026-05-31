@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-512.png">
+  <meta name="theme-color" content="#2e499d">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <title>設定</title>
+</head>
+<body>
+  <header class="top-nav">
+    <button class="nav-icon nav-menu" type="button" aria-label="メニュー">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+
+    <div class="page-title">
+      設定
+    </div>
+
+    <button class="nav-icon" type="button" aria-label="お知らせ">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </header>
+
+  <main class="app-main">
+    <section class="setting-section setting-section-main">
+      <h2 class="setting-main-title">通知設定</h2>
+
+      <div class="setting-card">
+        <label class="setting-row">
+          <span class="setting-label">通知バッジを表示する</span>
+          <input class="setting-checkbox" id="badgeEnabled" type="checkbox" checked>
+        </label>
+      </div>
+    </section>
+
+    <div class="setting-accordion" id="alertSettingsPanel">
+      <section class="setting-section">
+        <h3>賞味期限アラート</h3>
+        <p class="setting-note">賞味期限が入力されている食材の基本通知タイミングを設定します。</p>
+
+        <div class="setting-card">
+          <label class="setting-row">
+            <span class="setting-label">基本通知</span>
+            <select class="setting-select" id="defaultExpiryAlert">
+              <option value="1" selected>前日</option>
+              <option value="3">3日前</option>
+              <option value="7">1週間前</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="setting-section">
+        <h3>個別設定</h3>
+        <p class="setting-note">食材の種類ごとに、賞味期限アラートのタイミングを個別に変更できます。</p>
+
+        <div class="setting-card">
+          <label class="setting-row">
+            <span class="setting-label">肉</span>
+            <select class="setting-select" id="meatAlert">
+              <option value="1" selected>前日</option>
+              <option value="3">3日前</option>
+              <option value="7">1週間前</option>
+            </select>
+          </label>
+
+          <label class="setting-row">
+            <span class="setting-label">魚</span>
+            <select class="setting-select" id="fishAlert">
+              <option value="1" selected>前日</option>
+              <option value="3">3日前</option>
+              <option value="7">1週間前</option>
+            </select>
+          </label>
+
+          <label class="setting-row">
+            <span class="setting-label">卵・乳製品</span>
+            <select class="setting-select" id="dairyAlert">
+              <option value="1" selected>前日</option>
+              <option value="3">3日前</option>
+              <option value="7">1週間前</option>
+            </select>
+          </label>
+
+          <label class="setting-row">
+            <span class="setting-label">調味料</span>
+            <select class="setting-select" id="seasoningAlert">
+              <option value="14" selected>2週間前</option>
+              <option value="7">1週間前</option>
+              <option value="3">3日前</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="setting-section">
+        <h3>登録日基準アラート</h3>
+        <p class="setting-note">賞味期限が未入力の食材は、登録日からの経過日数でアラートします。</p>
+
+        <div class="setting-card">
+          <label class="setting-row">
+            <span class="setting-label">野菜・くだもの</span>
+            <select class="setting-select" id="vegetableAlert">
+              <option value="7">7日</option>
+              <option value="14" selected>14日</option>
+              <option value="21">21日</option>
+              <option value="30">30日</option>
+            </select>
+          </label>
+
+          <label class="setting-row">
+            <span class="setting-label">調理済み</span>
+            <select class="setting-select" id="cookedAlert">
+              <option value="1">1日</option>
+              <option value="2">2日</option>
+              <option value="3" selected>3日</option>
+              <option value="4">4日</option>
+              <option value="5">5日</option>
+              <option value="6">6日</option>
+              <option value="7">7日</option>
+            </select>
+          </label>
+
+          <label class="setting-row">
+            <span class="setting-label">冷凍庫</span>
+            <select class="setting-select" id="frozenAlert">
+              <option value="7">7日</option>
+              <option value="14">14日</option>
+              <option value="21">21日</option>
+              <option value="30" selected>30日</option>
+              <option value="60">60日</option>
+              <option value="90">90日</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html">
+      <span class="material-symbols-outlined">home</span>
+      <span>ホーム</span>
+    </a>
+
+    <button class="bottom-nav-button" type="button">
+      <span class="material-symbols-outlined">tune</span>
+      <span>整理する</span>
+    </button>
+
+    <div class="bottom-nav-spacer"></div>
+
+    <a href="shopping.html">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span>買い物リスト</span>
+    </a>
+
+    <a href="setting.html" class="is-active">
+      <span class="material-symbols-outlined">settings</span>
+      <span>設定</span>
+    </a>
+  </nav>
+
+  <script src="setting.js"></script>
+  <script>
+    const settings = appSettings.loadSettings();
+
+    const settingFields = {
+      badgeEnabled: document.getElementById("badgeEnabled"),
+      defaultExpiryAlert: document.getElementById("defaultExpiryAlert"),
+      meatAlert: document.getElementById("meatAlert"),
+      fishAlert: document.getElementById("fishAlert"),
+      dairyAlert: document.getElementById("dairyAlert"),
+      seasoningAlert: document.getElementById("seasoningAlert"),
+      vegetableAlert: document.getElementById("vegetableAlert"),
+      cookedAlert: document.getElementById("cookedAlert"),
+      frozenAlert: document.getElementById("frozenAlert")
+    };
+
+    const alertSettingsPanel = document.getElementById("alertSettingsPanel");
+
+    function updateAlertSettingsPanel() {
+      alertSettingsPanel.classList.toggle("is-open", settingFields.badgeEnabled.checked);
+    }
+
+    function applySettingsToForm() {
+      settingFields.badgeEnabled.checked = settings.badgeEnabled;
+      settingFields.defaultExpiryAlert.value = String(settings.defaultExpiryAlert);
+      settingFields.meatAlert.value = String(settings.meatAlert);
+      settingFields.fishAlert.value = String(settings.fishAlert);
+      settingFields.dairyAlert.value = String(settings.dairyAlert);
+      settingFields.seasoningAlert.value = String(settings.seasoningAlert);
+      settingFields.vegetableAlert.value = String(settings.vegetableAlert);
+      settingFields.cookedAlert.value = String(settings.cookedAlert);
+      settingFields.frozenAlert.value = String(settings.frozenAlert);
+      updateAlertSettingsPanel();
+    }
+
+    function saveCurrentSettings() {
+      const updatedSettings = {
+        badgeEnabled: settingFields.badgeEnabled.checked,
+        defaultExpiryAlert: Number(settingFields.defaultExpiryAlert.value),
+        meatAlert: Number(settingFields.meatAlert.value),
+        fishAlert: Number(settingFields.fishAlert.value),
+        dairyAlert: Number(settingFields.dairyAlert.value),
+        seasoningAlert: Number(settingFields.seasoningAlert.value),
+        vegetableAlert: Number(settingFields.vegetableAlert.value),
+        cookedAlert: Number(settingFields.cookedAlert.value),
+        frozenAlert: Number(settingFields.frozenAlert.value)
+      };
+
+      appSettings.saveSettings(updatedSettings);
+    }
+
+    Object.values(settingFields).forEach((field) => {
+      field.addEventListener("change", () => {
+        saveCurrentSettings();
+        updateAlertSettingsPanel();
+      });
+    });
+
+    applySettingsToForm();
+  </script>
+</body>
+</html>

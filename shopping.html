@@ -6,6 +6,9 @@
   <title>買い物リスト</title>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-512.png">
+  <meta name="theme-color" content="#2e499d">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
@@ -56,12 +59,13 @@
       <span>買い物リスト</span>
     </a>
 
-    <a href="#">
+    <a href="setting.html">
       <span class="material-symbols-outlined">settings</span>
       <span>設定</span>
     </a>
   </nav>
 
+  <script src="setting.js"></script>
   <script>
     const shoppingForm = document.getElementById("shoppingForm");
     const shoppingInput = document.getElementById("shoppingInput");
