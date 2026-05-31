@@ -12,8 +12,8 @@
 </head>
 <body>
   <header class="top-nav">
-    <button class="nav-icon nav-menu" type="button" aria-label="メニュー">
-      <span class="material-symbols-outlined">menu</span>
+    <button class="nav-icon nav-search" id="openSearchButton" type="button" aria-label="検索">
+      <span class="material-symbols-outlined">search</span>
     </button>
 
     <div class="page-title">
@@ -24,6 +24,16 @@
       <span class="material-symbols-outlined">notifications</span>
     </button>
   </header>
+
+  <div class="search-bar" id="searchBar" aria-hidden="true">
+    <label class="search-field">
+      <span class="material-symbols-outlined">search</span>
+      <input type="search" id="searchInput" placeholder="食材名で検索">
+    </label>
+    <button class="search-clear-button" id="clearSearchButton" type="button" aria-label="検索を閉じる">
+      <span class="material-symbols-outlined">keyboard_arrow_up</span>
+    </button>
+  </div>
 
   <main class="app-main">
     <ul id="foodList" class="food-list"></ul>
@@ -152,8 +162,13 @@
         </div>
 
         <div class="food-detail-row">
-          <dt>日付</dt>
+          <dt>賞味期限</dt>
           <dd id="detailFoodDate">-</dd>
+        </div>
+
+        <div class="food-detail-row">
+          <dt>登録日</dt>
+          <dd id="detailFoodRegisteredAt">-</dd>
         </div>
 
         <div class="food-detail-row food-detail-row-memo">

@@ -1,7 +1,8 @@
 const foodList = document.getElementById("foodList");
 
 let foods = JSON.parse(localStorage.getItem("foods")) || [];
-let currentSort = "registered";
+let currentSort = localStorage.getItem("currentSort") || "registered";
+let currentSearchKeyword = "";
 let currentFilters = {
   genres: [],
   storage: "",
@@ -54,10 +55,18 @@ function formatDate(dateText) {
 
 function getDateLabel(food) {
   if (food.expiryDate) {
-    return `期限: ${formatDate(food.expiryDate)}`;
+    return formatDate(food.expiryDate);
   }
 
-  return `登録: ${formatDate(food.registeredAt.slice(0, 10))}`;
+  return formatDate(food.registeredAt.slice(0, 10));
+}
+
+function getListDateLabel(food) {
+  if (food.expiryDate) {
+    return `期限：${formatDate(food.expiryDate)}`;
+  }
+
+  return `登録：${formatDate(food.registeredAt.slice(0, 10))}`;
 }
 
 function isExpired(food) {
@@ -211,6 +220,13 @@ function getComparableExpiryDate(food) {
 
 function getFilteredFoods() {
   return foods.filter((food) => {
+    if (
+      currentSearchKeyword &&
+      !food.name.toLowerCase().includes(currentSearchKeyword.toLowerCase())
+    ) {
+      return false;
+    }
+
     if (currentFilters.genres.length > 0 && !currentFilters.genres.includes(food.genre)) {
       return false;
     }
@@ -322,6 +338,10 @@ function openFoodDetailPanel(food) {
   document.getElementById("detailFoodStorage").textContent = food.storage;
   document.getElementById("detailFoodQuantity").textContent = `${food.quantity}${food.unit}`;
   document.getElementById("detailFoodDate").textContent = getDateLabel(food);
+  document.getElementById("detailFoodRegisteredAt").textContent =
+    food.registeredAt
+      ? food.registeredAt.slice(0, 10).replaceAll("-", "/")
+      : "-";
   document.getElementById("detailFoodMemo").textContent = food.memo || "メモなし";
 
   foodDetailPanel.classList.add("is-open");
@@ -337,6 +357,34 @@ function closeFoodDetailPanel() {
 
   foodDetailPanel.classList.remove("is-open");
   foodDetailPanel.setAttribute("aria-hidden", "true");
+}
+
+function closeSearchBar() {
+  if (!searchBar) {
+    return;
+  }
+
+  searchBar.classList.remove("is-open");
+  document.body.classList.remove("search-is-open");
+  document.removeEventListener("click", handleOutsideSearchClick, true);
+}
+
+function handleOutsideSearchClick(event) {
+  if (!searchBar || !searchBar.classList.contains("is-open")) {
+    document.removeEventListener("click", handleOutsideSearchClick, true);
+    return;
+  }
+
+  const clickedInsideSearch = searchBar.contains(event.target);
+  const clickedSearchButton = openSearchButton && openSearchButton.contains(event.target);
+
+  if (clickedInsideSearch || clickedSearchButton) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  closeSearchBar();
 }
 
 function deleteSelectedFood() {
@@ -434,7 +482,7 @@ function renderFoods() {
 
     amount.innerHTML = `
       <span>${food.quantity}${food.unit}</span>
-      <span class="${expiryClass}">${getDateLabel(food)}</span>
+      <span class="${expiryClass}">${getListDateLabel(food)}</span>
     `;
 
     detail.appendChild(name);
@@ -494,6 +542,10 @@ if (closeFoodDetailPanelButton) {
   closeFoodDetailPanelButton.addEventListener("click", closeFoodDetailPanel);
 }
 
+const searchBar = document.getElementById("searchBar");
+const openSearchButton = document.getElementById("openSearchButton");
+const searchInput = document.getElementById("searchInput");
+const clearSearchButton = document.getElementById("clearSearchButton");
 const editFoodButton = document.getElementById("editFoodButton");
 const deleteFoodButton = document.getElementById("deleteFoodButton");
 
@@ -505,9 +557,44 @@ if (deleteFoodButton) {
   deleteFoodButton.addEventListener("click", deleteSelectedFood);
 }
 
+if (openSearchButton && searchBar) {
+  openSearchButton.addEventListener("click", () => {
+    const isOpen = searchBar.classList.contains("is-open");
+
+    if (isOpen) {
+      closeSearchBar();
+      return;
+    }
+
+    searchBar.classList.add("is-open");
+
+    setTimeout(() => {
+      document.addEventListener("click", handleOutsideSearchClick, true);
+    }, 0);
+
+    if (searchInput) {
+      searchInput.focus();
+    }
+  });
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", (event) => {
+    currentSearchKeyword = event.target.value.trim();
+    renderFoods();
+  });
+}
+
+if (clearSearchButton) {
+  clearSearchButton.addEventListener("click", () => {
+    closeSearchBar();
+  });
+}
+
 sortButtons.forEach((button) => {
   button.addEventListener("click", () => {
     currentSort = button.dataset.sort;
+    localStorage.setItem("currentSort", currentSort);
 
     sortButtons.forEach((sortButton) => {
       sortButton.classList.remove("is-active");
@@ -536,6 +623,7 @@ applyFilters.addEventListener("click", () => {
 
 resetFilters.addEventListener("click", () => {
   currentSort = "registered";
+  localStorage.setItem("currentSort", currentSort);
   currentFilters = {
     genres: [],
     storage: "",
@@ -557,6 +645,12 @@ resetFilters.addEventListener("click", () => {
   renderFoods();
 });
 
+sortButtons.forEach((button) => {
+  button.classList.toggle(
+    "is-active",
+    button.dataset.sort === currentSort
+  );
+});
 renderFoods();
 
 if ("serviceWorker" in navigator) {

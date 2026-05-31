@@ -278,23 +278,21 @@ function markNotificationsAsRead() {
   });
 }
 
-function renderNotificationItem(food) {
-  return `
-    <div class="notification-item">
-      <div class="notification-item-name-row">
-        <div class="notification-item-name">${food.name}</div>
-        ${isUnreadNotification(food) ? `<span class="notification-unread-dot" aria-label="未確認"></span>` : ""}
-      </div>
-      <div class="notification-item-detail">${getNotificationMessage(food)}</div>
-    </div>
-  `;
+function closeNotificationPanel() {
+  const panel = document.getElementById("notificationPanel");
+
+  if (panel) {
+    panel.remove();
+  }
+
+  document.removeEventListener("click", handleOutsideNotificationClick, true);
 }
 
 function showNotificationPanel() {
   const existingPanel = document.getElementById("notificationPanel");
 
   if (existingPanel) {
-    existingPanel.remove();
+    closeNotificationPanel();
     return;
   }
 
@@ -346,6 +344,43 @@ function showNotificationPanel() {
   if (readButton) {
     readButton.addEventListener("click", markNotificationsAsRead);
   }
+
+  setTimeout(() => {
+    document.addEventListener("click", handleOutsideNotificationClick, true);
+  }, 0);
+}
+
+function handleOutsideNotificationClick(event) {
+  const panel = document.getElementById("notificationPanel");
+  const notificationButton = document.querySelector('[aria-label="お知らせ"]');
+
+  if (!panel) {
+    document.removeEventListener("click", handleOutsideNotificationClick);
+    return;
+  }
+
+  const clickedInsidePanel = panel.contains(event.target);
+  const clickedNotificationButton = notificationButton && notificationButton.contains(event.target);
+
+  if (clickedInsidePanel || clickedNotificationButton) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  closeNotificationPanel();
+}
+
+function renderNotificationItem(food) {
+  return `
+    <div class="notification-item">
+      <div class="notification-item-name-row">
+        <div class="notification-item-name">${food.name}</div>
+        ${isUnreadNotification(food) ? `<span class="notification-unread-dot" aria-label="未確認"></span>` : ""}
+      </div>
+      <div class="notification-item-detail">${getNotificationMessage(food)}</div>
+    </div>
+  `;
 }
 
 window.appSettings = {
