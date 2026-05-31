@@ -428,7 +428,9 @@ function renderFoods() {
   if (visibleFoods.length === 0) {
     const emptyMessage = document.createElement("p");
     emptyMessage.className = "empty-message";
-    emptyMessage.textContent = "まずは＋ボタンから食材を登録してみましょう";
+    emptyMessage.textContent = currentSearchKeyword
+      ? "該当する食材はありません"
+      : "まずは＋ボタンから食材を登録してみましょう";
     foodList.appendChild(emptyMessage);
     updateNotificationBadge();
     return;

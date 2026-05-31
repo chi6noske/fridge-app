@@ -116,6 +116,15 @@ button {
   text-decoration: none;
 }
 
+.nav-icon .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.page-back .material-symbols-outlined,
+.nav-icon[aria-label="ホームへ戻る"] .material-symbols-outlined {
+  font-size: 28px;
+}
+
 .nav-menu {
   justify-self: start;
 }
@@ -199,12 +208,12 @@ button {
   align-items: center;
   gap: 8px;
 
-  min-height: 40px;
-  padding: 0 12px;
+  min-height: 46px;
+  padding: 0 14px;
 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
 }
 
 .search-field .material-symbols-outlined {
@@ -220,7 +229,7 @@ button {
   border: none;
   color: var(--color-text);
 
-  font-size: 14px;
+  font-size: 13px;
   outline: none;
 }
 
@@ -234,7 +243,7 @@ button {
   justify-content: center;
 
   width: 36px;
-  height: 40px;
+  height: 46px;
 
   background: transparent;
   border: none;
@@ -527,9 +536,6 @@ li {
   text-decoration: none;
 }
 
-.page-back .material-symbols-outlined {
-  font-size: 28px;
-}
 
 .add-main {
   padding: 22px 20px 0;

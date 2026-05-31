@@ -14,8 +14,8 @@
 <body>
 
   <header class="top-nav">
-    <button class="nav-icon nav-menu" type="button" aria-label="メニュー">
-      <span class="material-symbols-outlined">menu</span>
+    <button class="nav-icon nav-search" type="button" aria-label="検索">
+      <span class="material-symbols-outlined">search</span>
     </button>
 
     <div class="page-title">
@@ -26,6 +26,17 @@
       <span class="material-symbols-outlined">notifications</span>
     </button>
   </header>
+
+  <div class="search-bar" id="searchBar" aria-hidden="true">
+    <label class="search-field">
+      <span class="material-symbols-outlined">search</span>
+      <input type="search" id="searchInput" placeholder="買い物リストを検索">
+    </label>
+
+    <button class="search-clear-button" id="clearSearchButton" type="button" aria-label="検索を閉じる">
+      <span class="material-symbols-outlined">keyboard_arrow_up</span>
+    </button>
+  </div>
 
   <main class="app-main shopping-main">
     <form id="shoppingForm" class="shopping-add-form">
@@ -73,6 +84,7 @@
     const focusShoppingInput = document.getElementById("focusShoppingInput");
 
     let shoppingItems = JSON.parse(localStorage.getItem("shoppingItems")) || [];
+    let currentSearchKeyword = "";
 
     function saveShoppingItems() {
       localStorage.setItem("shoppingItems", JSON.stringify(shoppingItems));
@@ -89,7 +101,19 @@
         return;
       }
 
-      const sortedItems = [...shoppingItems].sort((a, b) => {
+      const filteredItems = shoppingItems.filter((item) => {
+        return item.name.toLowerCase().includes(currentSearchKeyword.toLowerCase());
+      });
+
+      if (filteredItems.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "empty-message";
+        emptyMessage.textContent = "該当する買い物リストはありません";
+        shoppingList.appendChild(emptyMessage);
+        return;
+      }
+
+      const sortedItems = [...filteredItems].sort((a, b) => {
         return Number(a.done) - Number(b.done);
       });
 
@@ -157,6 +181,53 @@
 
     focusShoppingInput.addEventListener("click", () => {
       shoppingInput.focus();
+    });
+
+    const searchBar = document.getElementById("searchBar");
+    const openSearchButton = document.querySelector(".nav-search");
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchButton = document.getElementById("clearSearchButton");
+
+    function closeSearchBar() {
+      searchBar.classList.remove("is-open");
+      document.removeEventListener("click", handleOutsideSearchClick, true);
+    }
+
+    function handleOutsideSearchClick(event) {
+      if (
+        searchBar.contains(event.target) ||
+        openSearchButton.contains(event.target)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      closeSearchBar();
+    }
+
+    openSearchButton.addEventListener("click", () => {
+      if (searchBar.classList.contains("is-open")) {
+        closeSearchBar();
+        return;
+      }
+
+      searchBar.classList.add("is-open");
+
+      setTimeout(() => {
+        document.addEventListener("click", handleOutsideSearchClick, true);
+      }, 0);
+
+      searchInput.focus();
+    });
+
+    searchInput.addEventListener("input", (event) => {
+      currentSearchKeyword = event.target.value.trim();
+      renderShoppingItems();
+    });
+
+    clearSearchButton.addEventListener("click", () => {
+      closeSearchBar();
     });
 
     renderShoppingItems();
