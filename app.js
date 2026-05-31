@@ -306,6 +306,72 @@ function createSwipeEvents(li, container, index) {
   });
 }
 
+let selectedFoodId = null;
+
+function openFoodDetailPanel(food) {
+  selectedFoodId = food.id;
+
+  const foodDetailPanel = document.getElementById("foodDetailPanel");
+
+  if (!foodDetailPanel) {
+    return;
+  }
+
+  document.getElementById("detailFoodName").textContent = food.name;
+  document.getElementById("detailFoodGenre").textContent = food.genre;
+  document.getElementById("detailFoodStorage").textContent = food.storage;
+  document.getElementById("detailFoodQuantity").textContent = `${food.quantity}${food.unit}`;
+  document.getElementById("detailFoodDate").textContent = getDateLabel(food);
+  document.getElementById("detailFoodMemo").textContent = food.memo || "メモなし";
+
+  foodDetailPanel.classList.add("is-open");
+  foodDetailPanel.setAttribute("aria-hidden", "false");
+}
+
+function closeFoodDetailPanel() {
+  const foodDetailPanel = document.getElementById("foodDetailPanel");
+
+  if (!foodDetailPanel) {
+    return;
+  }
+
+  foodDetailPanel.classList.remove("is-open");
+  foodDetailPanel.setAttribute("aria-hidden", "true");
+}
+
+function deleteSelectedFood() {
+  if (!selectedFoodId) {
+    return;
+  }
+
+  const targetFood = foods.find((food) => food.id === selectedFoodId);
+
+  if (!targetFood) {
+    return;
+  }
+
+  const confirmed = window.confirm(`「${targetFood.name}」を削除しますか？`);
+
+  if (!confirmed) {
+    return;
+  }
+
+  foods = foods.filter((food) => food.id !== selectedFoodId);
+  selectedFoodId = null;
+
+  saveFoods();
+  closeFoodDetailPanel();
+  renderFoods();
+}
+
+function editSelectedFood() {
+  if (!selectedFoodId) {
+    return;
+  }
+
+  window.location.href = `add.html?mode=edit&id=${encodeURIComponent(selectedFoodId)}`;
+}
+
 function renderFoods() {
   foodList.innerHTML = "";
 
@@ -334,6 +400,9 @@ function renderFoods() {
 
     const li = document.createElement("li");
     li.className = "food-card swipe-item";
+    li.addEventListener("click", () => {
+      openFoodDetailPanel(food);
+    });
     createSwipeEvents(li, container, index);
 
     const thumbnail = document.createElement("div");
@@ -413,6 +482,28 @@ function closePanel() {
 openFilterPanel.addEventListener("click", openPanel);
 closeFilterPanel.addEventListener("click", closePanel);
 closeFilterPanelButton.addEventListener("click", closePanel);
+
+const closeFoodDetailPanelBackdrop = document.getElementById("closeFoodDetailPanel");
+const closeFoodDetailPanelButton = document.getElementById("closeFoodDetailPanelButton");
+
+if (closeFoodDetailPanelBackdrop) {
+  closeFoodDetailPanelBackdrop.addEventListener("click", closeFoodDetailPanel);
+}
+
+if (closeFoodDetailPanelButton) {
+  closeFoodDetailPanelButton.addEventListener("click", closeFoodDetailPanel);
+}
+
+const editFoodButton = document.getElementById("editFoodButton");
+const deleteFoodButton = document.getElementById("deleteFoodButton");
+
+if (editFoodButton) {
+  editFoodButton.addEventListener("click", editSelectedFood);
+}
+
+if (deleteFoodButton) {
+  deleteFoodButton.addEventListener("click", deleteSelectedFood);
+}
 
 sortButtons.forEach((button) => {
   button.addEventListener("click", () => {

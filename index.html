@@ -123,6 +123,56 @@
       </div>
     </section>
   </div>
+
+  <div class="food-detail-panel" id="foodDetailPanel" aria-hidden="true">
+    <div class="food-detail-backdrop" id="closeFoodDetailPanel"></div>
+
+    <section class="food-detail-content" aria-label="食材詳細">
+      <div class="food-detail-panel-header">
+        <h2 id="detailFoodName">食材詳細</h2>
+        <button class="food-detail-close" id="closeFoodDetailPanelButton" type="button" aria-label="閉じる">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <dl class="food-detail-list">
+        <div class="food-detail-row">
+          <dt>ジャンル</dt>
+          <dd id="detailFoodGenre">-</dd>
+        </div>
+
+        <div class="food-detail-row">
+          <dt>保存場所</dt>
+          <dd id="detailFoodStorage">-</dd>
+        </div>
+
+        <div class="food-detail-row">
+          <dt>数量</dt>
+          <dd id="detailFoodQuantity">-</dd>
+        </div>
+
+        <div class="food-detail-row">
+          <dt>日付</dt>
+          <dd id="detailFoodDate">-</dd>
+        </div>
+
+        <div class="food-detail-row food-detail-row-memo">
+          <dt>メモ</dt>
+          <dd id="detailFoodMemo">-</dd>
+        </div>
+      </dl>
+
+      <div class="food-detail-actions">
+        <button type="button" class="food-detail-edit-button" id="editFoodButton">
+          編集
+        </button>
+
+        <button type="button" class="food-detail-delete-button" id="deleteFoodButton">
+          削除
+        </button>
+      </div>
+    </section>
+  </div>
   <script src="setting.js"></script>
   <script src="app.js"></script>
 </body>

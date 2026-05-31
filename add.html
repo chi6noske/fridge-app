@@ -16,7 +16,7 @@
     <a class="page-back" href="index.html" aria-label="一覧へ戻る">
       <span class="material-symbols-outlined">chevron_left</span>
     </a>
-    <h1>食材を登録</h1>
+    <h1 id="formTitle">食材を登録</h1>
     <span class="page-top-spacer"></span>
   </header>
 
@@ -109,7 +109,7 @@
         <textarea id="memo" rows="3" placeholder="例）開封済み、使いかけなど"></textarea>
       </label>
 
-      <button type="submit" class="submit-button">登録する</button>
+      <button type="submit" class="submit-button" id="submitButton">登録する</button>
       <a class="cancel-link" href="index.html">キャンセル</a>
     </form>
   </main>
@@ -150,6 +150,11 @@
     const memo = document.getElementById("memo");
     const minusQuantity = document.getElementById("minusQuantity");
     const plusQuantity = document.getElementById("plusQuantity");
+    const formTitle = document.getElementById("formTitle");
+    const submitButton = document.getElementById("submitButton");
+    const params = new URLSearchParams(window.location.search);
+    const isEditMode = params.get("mode") === "edit";
+    const editFoodId = params.get("id");
 
     function loadFoods() {
       return JSON.parse(localStorage.getItem("foods")) || [];
@@ -157,6 +162,35 @@
 
     function saveFoods(foods) {
       localStorage.setItem("foods", JSON.stringify(foods));
+    }
+
+    function getEditFood(foods) {
+      if (!isEditMode || !editFoodId) {
+        return null;
+      }
+
+      return foods.find((food) => food.id === editFoodId) || null;
+    }
+
+    function applyEditMode() {
+      const foods = loadFoods();
+      const editFood = getEditFood(foods);
+
+      if (!editFood) {
+        return;
+      }
+
+      formTitle.textContent = "食材を編集";
+      submitButton.textContent = "保存する";
+      document.title = "食材編集｜冷蔵庫アプリ";
+
+      foodName.value = editFood.name || "";
+      foodGenre.value = editFood.genre || "";
+      storagePlace.value = editFood.storage || "";
+      quantity.value = editFood.quantity ?? 1;
+      unit.value = editFood.unit || "個";
+      expiryDate.value = editFood.expiryDate || "";
+      memo.value = editFood.memo || "";
     }
 
     minusQuantity.addEventListener("click", () => {
@@ -179,9 +213,7 @@
         return;
       }
 
-      foods.push({
-        id: crypto.randomUUID(),
-        registeredAt: new Date().toISOString(),
+      const foodData = {
         name: name,
         genre: foodGenre.value,
         storage: storagePlace.value,
@@ -189,11 +221,35 @@
         unit: unit.value,
         expiryDate: expiryDate.value,
         memo: memo.value.trim()
-      });
+      };
 
-      saveFoods(foods);
+      if (isEditMode && editFoodId) {
+        const updatedFoods = foods.map((food) => {
+          if (food.id !== editFoodId) {
+            return food;
+          }
+
+          return {
+            ...food,
+            ...foodData
+          };
+        });
+
+        saveFoods(updatedFoods);
+      } else {
+        foods.push({
+          id: crypto.randomUUID(),
+          registeredAt: new Date().toISOString(),
+          ...foodData
+        });
+
+        saveFoods(foods);
+      }
+
       window.location.href = "index.html";
     });
+
+    applyEditMode();
   </script>
 </body>
 </html>
